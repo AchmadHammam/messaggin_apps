@@ -16,8 +16,10 @@ dependencies:
   get: ^4.7.2
   flutter_easyloading: ^3.0.5
   infinite_scroll_pagination: ^5.1.1
-  
-  
+  pointycastle: ^3.7.3
+  flutter_secure_storage: ^9.0.0
+  intl: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

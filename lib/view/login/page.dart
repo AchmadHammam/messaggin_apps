@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:messaging_application/component/button.dart';
 import 'package:messaging_application/component/input.dart';
 import 'package:messaging_application/view/login/controller.dart';
 import 'package:messaging_application/view/menu/page.dart';
+import 'package:messaging_application/view/register/page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         minimum: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * .05,
@@ -38,6 +41,9 @@ class _LoginPageState extends State<LoginPage> {
               label: "Password",
             ),
             CostumButtonComponent(
+              margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * .02,
+              ),
               onTap: () {
                 loginController
                     .login(
@@ -45,13 +51,27 @@ class _LoginPageState extends State<LoginPage> {
                       password: controllerPassword.text,
                     )
                     .then((v) {
-                      if (v == true) {
-                        Get.to(MenuPage());
-                      }
+                      Get.to(MenuPage());
+                      if (v == true) {}
                     });
               },
-              margin: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * .02,
+            ),
+            Text.rich(
+              TextSpan(
+                text: "Don't have an account? ",
+                style: Theme.of(context).textTheme.bodyMedium,
+                children: [
+                  TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Get.to(RegisterPage());
+                      },
+                    text: "Register",
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                  ),
+                ],
               ),
             ),
           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:messaging_application/helper/auth_controller.dart';
 import 'package:messaging_application/view/login/page.dart';
 import 'package:messaging_application/view/menu/page.dart';
-import 'package:messaging_application/view/splash/controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,12 +12,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SplashController splashController = SplashController();
+  AuthController authController = AuthController();
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      splashController.checkToken().then((value) {
+      authController.checkToken().then((value) {
+        print(value);
         if (value != null) {
           Get.offAll(MenuPage());
         } else {

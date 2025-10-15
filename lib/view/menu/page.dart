@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:messaging_application/view/menu_calls/page.dart';
 import 'package:messaging_application/view/menu_chat/page.dart';
 import 'package:messaging_application/view/menu_update/page.dart';
+import 'package:messaging_application/view/profile/page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -15,11 +17,18 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 90, 90, 90),
       appBar: AppBar(
         title: const Text("Menu", style: TextStyle(color: Colors.white)),
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 46, 46, 46),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(ProfilePage());
+            },
+            icon: Icon(Icons.more_vert_outlined, color: Colors.white),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 46, 46),

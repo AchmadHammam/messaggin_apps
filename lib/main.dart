@@ -15,7 +15,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(textTheme: GoogleFonts.rosarioTextTheme()),
+      theme: ThemeData(
+        textTheme: GoogleFonts.rosarioTextTheme(),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 90, 90, 90),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 46, 46, 46),
+          iconTheme: IconThemeData(color: Colors.white),
+          leadingWidth: 30,
+        ),
+      ),
       builder: EasyLoading.init(),
       home: const SplashScreen(),
     );

@@ -16,6 +16,16 @@ class InputCostumComponent extends StatefulWidget {
 }
 
 class _InputCostumComponentState extends State<InputCostumComponent> {
+  bool password = false;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      password =
+          widget.label == "Password" || widget.label == "Confirm Password";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,11 +34,36 @@ class _InputCostumComponentState extends State<InputCostumComponent> {
       ),
       child: TextField(
         controller: widget.controller,
-        obscureText: widget.label == "Password" ? true : false,
+        obscureText: password,
         keyboardType: widget.keyboardType,
+
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: widget.label,
+          suffixIcon:
+              ((widget.label == "Password" ||
+                      widget.label == "Confirm Password") &&
+                  !password)
+              ? IconButton(
+                  icon: Icon(Icons.remove_red_eye),
+                  onPressed: () {
+                    setState(() {
+                      password = !password;
+                    });
+                  },
+                )
+              : ((widget.label == "Password" ||
+                        widget.label == "Confirm Password") &&
+                    password)
+              ? IconButton(
+                  icon: Icon(Icons.remove_red_eye_outlined),
+                  onPressed: () {
+                    setState(() {
+                      password = !password;
+                    });
+                  },
+                )
+              : null,
         ),
       ),
     );
