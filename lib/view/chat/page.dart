@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:messaging_application/helper/auth_controller.dart';
 import 'package:messaging_application/model/chat.dart';
@@ -17,11 +18,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  ChatController chatController = ChatController();
+  ChatController chatController = Get.put(ChatController());
   AuthController authController = Get.put(AuthController());
+  late PagingController<int, Chat> pagingController;
   @override
   void initState() {
     super.initState();
+    pagingController = chatController.pagingController;
   }
 
   @override
@@ -45,79 +48,93 @@ class _ChatPageState extends State<ChatPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            Obx(() {
-              return Container(
-                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * .07),
-                padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * .02,
-                  horizontal: MediaQuery.of(context).size.width * .025,
-                ),
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: chatController.listChat.length,
-                  itemBuilder: (context, index) {
-                    final chat = chatController.listChat[index];
-                    return ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * .7,
-                        minWidth: MediaQuery.of(context).size.width * .3,
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: chat.senderId == authController.userId.value
-                              ? MediaQuery.of(context).size.width * .05
-                              : 0,
-                          right: chat.senderId != authController.userId.value
-                              ? MediaQuery.of(context).size.width * .05
-                              : 0,
-                          bottom: MediaQuery.of(context).size.height * .005,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 46, 46, 46),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade800,
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
+            PagingListener(
+              controller: pagingController,
+              builder: (context, state, fetchNextPage) {
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    pagingController.refresh();
+                  },
+                  child: SafeArea(
+                    child: PagedListView(
+                      state: state,
+                      fetchNextPage: fetchNextPage,
+                      builderDelegate: PagedChildBuilderDelegate<Chat>(
+                        itemBuilder: (context, item, index) {
+                          Chat chat = item;
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height * .07,
                             ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: chat.senderId == authController.userId.value
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft,
-                                child: Text(
-                                  chat.message,
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
-                                ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: MediaQuery.of(context).size.height * .02,
+                              horizontal: MediaQuery.of(context).size.width * .025,
+                            ),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width * .7,
+                                minWidth: MediaQuery.of(context).size.width * .3,
                               ),
-                              Align(
-                                alignment: chat.senderId == authController.userId.value
-                                    ? Alignment.bottomLeft
-                                    : Alignment.bottomRight,
-                                child: Text(
-                                  DateFormat('hh:mm a').format(chat.createdAt!),
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: .6),
-                                    fontSize: 12,
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: chat.senderId == authController.userId.value
+                                      ? MediaQuery.of(context).size.width * .05
+                                      : 0,
+                                  right: chat.senderId != authController.userId.value
+                                      ? MediaQuery.of(context).size.width * .05
+                                      : 0,
+                                  bottom: MediaQuery.of(context).size.height * .005,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 46, 46, 46),
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade800,
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: chat.senderId == authController.userId.value
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: Text(
+                                          chat.message,
+                                          style: TextStyle(color: Colors.white, fontSize: 16),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: chat.senderId == authController.userId.value
+                                            ? Alignment.bottomLeft
+                                            : Alignment.bottomRight,
+                                        child: Text(
+                                          DateFormat('hh:mm a').format(chat.createdAt!),
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(alpha: .6),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              );
-            }),
+                    ),
+                  ),
+                );
+              },
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(
@@ -159,13 +176,9 @@ class _ChatPageState extends State<ChatPage> {
                         icon: Icon(Icons.send, color: Colors.white),
                         onPressed: () {
                           setState(() {
-                            chatController.addChat(
-                              Chat(
-                                senderId: authController.userId.value,
-                                // senderId: 2,
-                                message: messageController.text,
-                                createdAt: DateTime.now(),
-                              ),
+                            chatController.sendChat(
+                              chatRoomId: widget.chatRoomId,
+                              message: messageController.text,
                             );
                             messageController.clear();
                           });

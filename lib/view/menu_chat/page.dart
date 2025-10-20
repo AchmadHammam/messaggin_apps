@@ -16,15 +16,14 @@ class MenuChatPage extends StatefulWidget {
 
 class _MenuChatPageState extends State<MenuChatPage> {
   MenuChatController chatController = MenuChatController();
-  AuthController authController = AuthController();
+  AuthController authController = Get.put(AuthController());
+
   late PagingController<int, ChatRoom> pagingController;
-  int? userId;
   @override
   void initState() {
     super.initState();
     pagingController = PagingController(
-      getNextPageKey: (state) =>
-          state.lastPageIsEmpty ? null : state.nextIntPageKey,
+      getNextPageKey: (state) => state.lastPageIsEmpty ? null : state.nextIntPageKey,
       fetchPage: (int pageKey) {
         return chatController.getListChatRoom(page: pageKey);
       },
@@ -34,10 +33,7 @@ class _MenuChatPageState extends State<MenuChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add)),
       body: PagingListener(
         controller: pagingController,
         builder: (context, state, fetchNextPage) {
@@ -73,16 +69,17 @@ class _MenuChatPageState extends State<MenuChatPage> {
                         Get.to(
                           ChatPage(
                             chatRoomId: item.id,
-                            chatRoomName: userId != item.user1.id
-                                ? item.user1.nama!
-                                : item.user2.nama!,
+                            chatRoomName: authController.userId.value == item.user1.id
+                                ? item.user2.nama!
+                                : item.user1.nama!,
                           ),
+                          arguments: {'chatRoomId': item.id},
                         );
                       },
                       title: Text(
-                        userId != item.user1.id
-                            ? item.user1.nama!
-                            : item.user2.nama!,
+                        authController.userId.value == item.user1.id
+                            ? item.user2.nama!
+                            : item.user1.nama!,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -95,28 +92,17 @@ class _MenuChatPageState extends State<MenuChatPage> {
                         ),
                       ),
                       subtitle: Text(
-                        item.lastChatMessage != null
-                            ? item.lastChatMessage!.message
-                            : '',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          height: 1.5,
-                        ),
+                        item.lastChatMessage != null ? item.lastChatMessage!.message : '',
+                        style: const TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
                       ),
                       trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
                             item.lastChatMessage != null
-                                ? DateFormat(
-                                    'HH:mm',
-                                  ).format(item.lastChatMessage!.createdAt!)
+                                ? DateFormat('HH:mm').format(item.lastChatMessage!.createdAt!)
                                 : '',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
                           ),
                           Container(
                             width: 15,

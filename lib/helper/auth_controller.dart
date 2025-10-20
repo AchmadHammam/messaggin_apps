@@ -22,12 +22,9 @@ class AuthController extends GetxController {
   Future<String?> checkToken() async {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    if (token!.isNotEmpty) {
+    if (token != null) {
       var url = Uri.parse('${APIService.baseUrl}/auth/verify');
-      var res = await http.post(
-        url,
-        headers: {'Authorization': 'Bearer $token'},
-      );
+      var res = await http.post(url, headers: {'Authorization': 'Bearer $token'});
       if (res.statusCode == 200) {
         return token;
       }

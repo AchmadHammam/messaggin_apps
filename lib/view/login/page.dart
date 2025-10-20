@@ -23,9 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        minimum: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * .05,
-        ),
+        minimum: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .05),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -41,18 +39,14 @@ class _LoginPageState extends State<LoginPage> {
               label: "Password",
             ),
             CostumButtonComponent(
-              margin: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * .02,
-              ),
+              margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * .02),
               onTap: () {
                 loginController
-                    .login(
-                      email: controllerEmail.text,
-                      password: controllerPassword.text,
-                    )
+                    .login(email: controllerEmail.text, password: controllerPassword.text)
                     .then((v) {
-                      Get.to(MenuPage());
-                      if (v == true) {}
+                      if (v == true) {
+                        Get.to(MenuPage());
+                      }
                     });
               },
             ),
@@ -67,9 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                         Get.to(RegisterPage());
                       },
                     text: "Register",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
                   ),
                 ],
               ),

@@ -10,7 +10,7 @@ class Chat {
 
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
-      senderId: json['senderId'],
+      senderId: json['sender_id'],
       id: json['id'],
       message: json['message'] as String,
       createdAt: json['createdAt'] != null
