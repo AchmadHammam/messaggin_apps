@@ -9,7 +9,13 @@ import 'package:messaging_application/view/chat/controller.dart';
 class ChatPage extends StatefulWidget {
   final int chatRoomId;
   final String chatRoomName;
-  const ChatPage({super.key, required this.chatRoomId, required this.chatRoomName});
+  final int recevierId;
+  const ChatPage({
+    super.key,
+    required this.chatRoomId,
+    required this.chatRoomName,
+    required this.recevierId,
+  });
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -25,6 +31,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     pagingController = chatController.pagingController;
+    print(authController.userId.value);
   }
 
   @override
@@ -62,72 +69,76 @@ class _ChatPageState extends State<ChatPage> {
                       builderDelegate: PagedChildBuilderDelegate<Chat>(
                         itemBuilder: (context, item, index) {
                           Chat chat = item;
-                          return Container(
-                            margin: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).size.height * .07,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: MediaQuery.of(context).size.height * .02,
-                              horizontal: MediaQuery.of(context).size.width * .025,
-                            ),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * .7,
-                                minWidth: MediaQuery.of(context).size.width * .3,
+                          if (chat.message != null) {
+                            return Container(
+                              margin: EdgeInsets.only(
+                                // bottom: MediaQuery.of(context).size.height * .07,
                               ),
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                  left: chat.senderId == authController.userId.value
-                                      ? MediaQuery.of(context).size.width * .05
-                                      : 0,
-                                  right: chat.senderId != authController.userId.value
-                                      ? MediaQuery.of(context).size.width * .05
-                                      : 0,
-                                  bottom: MediaQuery.of(context).size.height * .005,
+                              padding: EdgeInsets.symmetric(
+                                vertical: MediaQuery.of(context).size.height * .02,
+                                horizontal: MediaQuery.of(context).size.width * .025,
+                              ),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * .7,
+                                  minWidth: MediaQuery.of(context).size.width * .3,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 46, 46, 46),
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade800,
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                  child: Column(
-                                    children: [
-                                      Align(
-                                        alignment: chat.senderId == authController.userId.value
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                        child: Text(
-                                          chat.message,
-                                          style: TextStyle(color: Colors.white, fontSize: 16),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: chat.senderId == authController.userId.value
-                                            ? Alignment.bottomLeft
-                                            : Alignment.bottomRight,
-                                        child: Text(
-                                          DateFormat('hh:mm a').format(chat.createdAt!),
-                                          style: TextStyle(
-                                            color: Colors.white.withValues(alpha: .6),
-                                            fontSize: 12,
-                                          ),
-                                        ),
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    left: chat.senderId == authController.userId.value
+                                        ? MediaQuery.of(context).size.width * .05
+                                        : 0,
+                                    right: chat.senderId != authController.userId.value
+                                        ? MediaQuery.of(context).size.width * .05
+                                        : 0,
+                                    // bottom: MediaQuery.of(context).size.height * .005,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(255, 46, 46, 46),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade800,
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
                                       ),
                                     ],
                                   ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        Align(
+                                          alignment: chat.senderId == authController.userId.value
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          child: Text(
+                                            chat.message!,
+                                            style: TextStyle(color: Colors.white, fontSize: 16),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: chat.senderId == authController.userId.value
+                                              ? Alignment.bottomLeft
+                                              : Alignment.bottomRight,
+                                          child: Text(
+                                            DateFormat('hh:mm a').format(chat.createdAt!),
+                                            style: TextStyle(
+                                              color: Colors.white.withValues(alpha: .6),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return SizedBox.shrink();
+                          }
                         },
                       ),
                     ),
@@ -179,6 +190,7 @@ class _ChatPageState extends State<ChatPage> {
                             chatController.sendChat(
                               chatRoomId: widget.chatRoomId,
                               message: messageController.text,
+                              recevierId: widget.recevierId,
                             );
                             messageController.clear();
                           });

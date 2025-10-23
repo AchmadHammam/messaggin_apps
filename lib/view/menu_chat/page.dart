@@ -72,6 +72,9 @@ class _MenuChatPageState extends State<MenuChatPage> {
                             chatRoomName: authController.userId.value == item.user1.id
                                 ? item.user2.nama!
                                 : item.user1.nama!,
+                            recevierId: authController.userId.value == item.user1.id
+                                ? item.user2.id
+                                : item.user1.id,
                           ),
                           arguments: {'chatRoomId': item.id},
                         );
@@ -92,7 +95,7 @@ class _MenuChatPageState extends State<MenuChatPage> {
                         ),
                       ),
                       subtitle: Text(
-                        item.lastChatMessage != null ? item.lastChatMessage!.message : '',
+                        (item.lastChatMessage !=null && item.lastChatMessage!.message != null )? item.lastChatMessage!.message! : '',
                         style: const TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
                       ),
                       trailing: Column(

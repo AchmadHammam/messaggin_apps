@@ -7,6 +7,8 @@ import 'package:pointycastle/asn1/primitives/asn1_null.dart';
 import 'package:pointycastle/asn1/primitives/asn1_object_identifier.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:pointycastle/api.dart';
+import 'package:pointycastle/export.dart';
 
 String encodePublicKeyToPem(RSAPublicKey publicKey) {
   final algorithmSeq = ASN1Sequence()
@@ -17,9 +19,7 @@ String encodePublicKeyToPem(RSAPublicKey publicKey) {
     ..add(ASN1Integer(publicKey.modulus!))
     ..add(ASN1Integer(publicKey.exponent!));
 
-  final publicKeyBitString = ASN1BitString(
-    stringValues: Uint8List.fromList(publicKeySeq.encode()),
-  );
+  final publicKeyBitString = ASN1BitString(stringValues: Uint8List.fromList(publicKeySeq.encode()));
 
   final topLevelSeq = ASN1Sequence()
     ..add(algorithmSeq)
@@ -53,4 +53,25 @@ String encodePrivateKeyToPem(RSAPrivateKey privateKey) {
 
   final base64PrivKey = base64Encode(seq.encode());
   return '-----BEGIN PRIVATE KEY-----\n$base64PrivKey\n-----END PRIVATE KEY-----';
+}
+
+String encryptMessage(String message, RSAPublicKey publicKey) {
+  final encryptor = OAEPEncoding(RSAEngine())
+    ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
+  final cipherData = encryptor.process(Uint8List.fromList(utf8.encode(message)));
+  return base64Encode(cipherData);
+}
+
+String? decryptMessage(RSAPrivateKey privateKey, String message) {
+  try {
+    final decryptor = OAEPEncoding(RSAEngine())
+      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey)); // false=decrypt
+    final Uint8List encryptedBytes = base64Decode(message);
+    final decryptedBytes = decryptor.process(encryptedBytes);
+    final decryptedMessage = utf8.decode(decryptedBytes);
+    return decryptedMessage;
+  } catch (e) {
+    print('Decryption error: $e');
+  }
+  return null;
 }

@@ -3,19 +3,21 @@ import 'package:messaging_application/model/user.dart';
 class Chat {
   final int? id;
   final int? senderId;
-  final String message;
+  final int? receiverId;
+  final int? readerId;
+  String? message;
   final DateTime? createdAt;
 
-  Chat({this.id, required this.message, this.createdAt, this.senderId});
+  Chat({this.id, this.message, this.createdAt, this.senderId, this.receiverId, this.readerId});
 
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
-      senderId: json['sender_id'],
+      senderId: json['senderId'],
       id: json['id'],
       message: json['message'] as String,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
+      receiverId: json['receiverId'],
+      readerId: json['readerId'],
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
     );
   }
 }

@@ -10,7 +10,6 @@ import 'package:messaging_application/constant/api_service.dart';
 import 'package:messaging_application/helper/helper.dart';
 import 'package:messaging_application/model/login.dart';
 import 'package:pointycastle/api.dart';
-import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
@@ -42,8 +41,8 @@ class LoginController extends GetxController {
       final publicKey = pair.publicKey;
       final privateKey = pair.privateKey;
       // Convert ke base64 agar mudah disimpan
-      final pubKeyPem = encodePublicKeyToPem(publicKey as RSAPublicKey);
-      final privKeyPem = encodePrivateKeyToPem(privateKey as RSAPrivateKey);
+      final pubKeyPem = encodePublicKeyToPem(publicKey);
+      final privKeyPem = encodePrivateKeyToPem(privateKey);
 
       // Simpan ke secure storage
       await storage.write(key: 'publicKey', value: pubKeyPem);
