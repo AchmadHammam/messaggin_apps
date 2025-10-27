@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:messaging_application/helper/auth_controller.dart';
+import 'package:messaging_application/helper/helper.dart';
 import 'package:messaging_application/model/chat.dart';
 import 'package:messaging_application/view/chat/controller.dart';
 
@@ -21,7 +22,7 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with RouteAware, WidgetsBindingObserver {
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   ChatController chatController = Get.put(ChatController());
@@ -30,8 +31,35 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     pagingController = chatController.pagingController;
-    print(authController.userId.value);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
+  }
+
+  @override
+  void didPopNext() {
+    pagingController.refresh();
+    super.didPopNext();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    routeObserver.unsubscribe(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Aplikasi kembali aktif / halaman fokus lagi
+      pagingController.refresh();
+    }
   }
 
   @override
@@ -48,7 +76,10 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
             ),
-            Text(widget.chatRoomName, style: TextStyle(color: Colors.white)),
+            Text(
+              widget.chatRoomName,
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

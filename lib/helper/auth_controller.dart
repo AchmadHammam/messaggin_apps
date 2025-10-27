@@ -33,6 +33,9 @@ class AuthController extends GetxController {
   }
 
   Future<bool> logout() async {
+    var token = await checkToken();
+    var url = Uri.parse('${APIService.baseUrl}/auth/logout');
+    await http.post(url, headers: {'Authorization': 'Bearer $token'});
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
     return true;

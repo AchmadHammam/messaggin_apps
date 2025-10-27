@@ -26,7 +26,7 @@ class ChatRoom {
   final int id;
   final DateTime lastMessageAt;
   final String lastMessageBy;
-  final int totalUnread;
+  final int? totalUnread;
   final User user2;
   final User user1;
   final Chat? lastChatMessage;
@@ -47,7 +47,7 @@ class ChatRoom {
       lastMessageBy: json['lastMessageBy'] as String,
       user2: User.fromJson(json['user2'] as Map<String, dynamic>),
       user1: User.fromJson(json['user1'] as Map<String, dynamic>),
-      totalUnread: json['totalNotRead'] as int,
+      totalUnread: json['totalNotRead'],
       lastChatMessage: json['lastChatMessage'] != null
           ? Chat.fromJson(json['lastChatMessage'] as Map<String, dynamic>)
           : null,

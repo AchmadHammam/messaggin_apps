@@ -17,7 +17,7 @@ import 'package:basic_utils/basic_utils.dart';
 class ChatController extends GetxController {
   RxList<Chat> listChat = <Chat>[].obs;
   int limit = 10;
-  final storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = FlutterSecureStorage();
 
   AuthController authController = Get.find<AuthController>();
   RxBool isLoading = false.obs;
@@ -71,6 +71,7 @@ class ChatController extends GetxController {
     socket.on('reload', (data) {
       pagingController.refresh();
     });
+    
 
     socket.onConnectError((err) => print('❌ Connect error: $err'));
     socket.onError((err) => print('⚠️ Error: $err'));
